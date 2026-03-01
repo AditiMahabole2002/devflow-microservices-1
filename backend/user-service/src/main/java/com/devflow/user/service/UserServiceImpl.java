@@ -1,14 +1,17 @@
 package com.devflow.user.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.devflow.user.dto.UserRegistrationRequest;
 import com.devflow.user.dto.UserResponse;
 import com.devflow.user.entity.Role;
 import com.devflow.user.entity.User;
+import com.devflow.user.exception.EmailAlreadyExistsException;
 import com.devflow.user.repository.RoleRepository;
 import com.devflow.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +27,7 @@ public class UserServiceImpl implements UserService {
         String normalizedEmail = request.getEmail().trim().toLowerCase();
 
         if (userRepository.existsByEmail(normalizedEmail)) {
-            throw new RuntimeException("Email already exists");
+        	throw new EmailAlreadyExistsException("Email already exists");
         }
 
         Role userRole = roleRepository.findByName("ROLE_USER")
